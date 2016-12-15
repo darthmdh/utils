@@ -24,23 +24,22 @@
 
 from __future__ import print_function
 
-def gen_colour(c):
-    return '\033[38;5;{0!s}m{0!s:>4} \033[48;5;{0!s}mxxxxx\033[0m'.format(c)
 
-print('## Normal ASCII terminal colours ##\n')
-for c in range(16):
-    print(gen_colour(c), end='')
-    if (c + 1) % 8 == 0: print('\n')
-
-print('## Extended ASCII terminal colour range ##\n')
-for r in range(6):
-    for g in range(6):
-        for b in range(6):
-            c = 16 + (r * 36) + (g * 6) + b
-            print(gen_colour(c), end='')
-            if (c + 3) % 6 == 0: print('\n')
-
-print('## Final Grayscale patch\n')
-for c in range(232,256):
-    print(gen_colour(c), end='')
-    if (c + 1) % 8 == 0: print('\n')
+def gen_colour():
+    pivots = (0x0, 0x5f, 0x87, 0xaf, 0xd7, 0xff)
+    fakies = dict(zip(range(16), ["N/A"] * 16))
+    palette = ["#%02x%02x%02x" % (r,g,b) for r in pivots for g in pivots for b in pivots]
+    palette = dict(zip(range(16, len(palette)+16), palette))
+    greyscale = dict(zip(range(232, 256), ["#%02x%02x%02x" % (g,g,g) for g in range(8, 248, 10)]))
+    palette.update(greyscale)
+    palette.update(fakies)
+    assert len(palette) == 256
+    for i, c in palette.iteritems():
+        if i < 16:
+            end = '\n' if (i + 1) % 8 == 0 else ''
+        else:
+            end = '\n' if i % 6 == 3 else ''
+        yield ('\033[38;5;{0!s}m{0!s:>4} {1!s} \033[48;5;{0!s}mxxxxx\033[0m'.format(i, c), end)
+            
+for colour, end in gen_colour():
+    print(colour, end=end)
