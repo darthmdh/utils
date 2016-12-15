@@ -28,9 +28,9 @@ from __future__ import print_function
 def gen_colour():
     pivots = (0x0, 0x5f, 0x87, 0xaf, 0xd7, 0xff)
     fakies = dict(zip(range(16), ["N/A"] * 16))
-    palette = ["#%02x%02x%02x" % (r,g,b) for r in pivots for g in pivots for b in pivots]
+    palette = ["#{0:02x}{1:02x}{2:02x}".format(r,g,b) for r in pivots for g in pivots for b in pivots]
     palette = dict(zip(range(16, len(palette)+16), palette))
-    greyscale = dict(zip(range(232, 256), ["#%02x%02x%02x" % (g,g,g) for g in range(8, 248, 10)]))
+    greyscale = dict(zip(range(232, 256), ["#{0:02x}{0:02x}{0:02x}".format(g) for g in range(8, 248, 10)]))
     palette.update(greyscale)
     palette.update(fakies)
     assert len(palette) == 256
